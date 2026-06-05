@@ -1,0 +1,68 @@
+name: Build WhatsMeow Linux AMD64 SO
+
+on:
+  workflow_dispatch:
+    inputs:
+      whatsmeow_version:
+        description: "WhatsMeow version latest"
+        required: false
+        default: "latest"
+      goneonize_version:
+        description: "Goneonize version expected by installed neonize Python package"
+        required: false
+        default: "0.3.18.post0"
+
+jobs:
+  build-linux-amd64:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "^1.21.5"
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libc6-dev
+
+      - name: Install Python dependencies
+        run: uv sync --dev
+
+      - name: Set goneonize version
+        run: uv run task version goneonize --set-version "${{ inputs.goneonize_version }}"
+
+      - name: Update WhatsMeow
+        run: |
+          cd goneonize
+          go get go.mau.fi/whatsmeow@${{ inputs.whatsmeow_version }}
+          go mod tidy
+
+      - name: Build Linux AMD64 SO
+        run: |
+          export CGO_ENABLED=1
+          export GOOS=linux
+          export GOARCH=amd64
+          export CC=gcc
+          uv run task build goneonize
+
+      - name: Verify artifact
+        run: |
+          test -f neonize/neonize-linux-amd64.so
+          file neonize/neonize-linux-amd64.so
+          ls -lh neonize/neonize-linux-amd64.so
+
+      - name: Upload SO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neonize-linux-amd64
+          path: neonize/neonize-linux-amd64.so
