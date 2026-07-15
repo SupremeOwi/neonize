@@ -55,7 +55,12 @@ var (
 
 // Defaults to sqlite otherwise use postgres database url
 func getDB(db *C.char, dbLog utils.Logger) (*sqlstore.Container, error) {
-	container, err := sqlstore.New(context.TODO(), "sqlite3", fmt.Sprintf("file:%s?_foreign_keys=on", C.GoString(db)), dbLog)
+	container, err := sqlstore.New(
+		context.TODO(),
+		"sqlite3",
+		fmt.Sprintf("file:%s?_foreign_keys=on&_journal_mode=WAL&_busy_timeout=10000&_synchronous=NORMAL", C.GoString(db)),
+		dbLog,
+	)
 	if strings.HasPrefix(C.GoString(db), "postgres") {
 		container, err = sqlstore.New(context.TODO(), "postgres", C.GoString(db), dbLog)
 	}
