@@ -157,11 +157,11 @@ func EncodeMessageDebugTimings(debugTimings whatsmeow.MessageDebugTimings) *defp
 		Queue:           proto.Int64(debugTimings.Queue.Nanoseconds()),
 		Marshal_:        proto.Int64(debugTimings.Marshal.Nanoseconds()),
 		GetParticipants: proto.Int64(debugTimings.GetParticipants.Nanoseconds()),
-		GetDevices:      proto.Int64(debugTimings.GetParticipants.Nanoseconds()),
-		GroupEncrypt:    proto.Int64(debugTimings.Queue.Nanoseconds()),
+		GetDevices:      proto.Int64(debugTimings.GetDevices.Nanoseconds()),
+		GroupEncrypt:    proto.Int64(debugTimings.GroupEncrypt.Nanoseconds()),
 		PeerEncrypt:     proto.Int64(debugTimings.PeerEncrypt.Nanoseconds()),
 		Send:            proto.Int64(debugTimings.Send.Nanoseconds()),
-		Resp:            proto.Int64(debugTimings.Queue.Nanoseconds()),
+		Resp:            proto.Int64(debugTimings.Resp.Nanoseconds()),
 		Retry:           proto.Int64(debugTimings.Retry.Nanoseconds()),
 	}
 }
