@@ -10,7 +10,7 @@ on:
       goneonize_version:
         description: "Goneonize version expected by installed neonize Python package"
         required: false
-        default: "0.3.18.post0"
+        default: "0.4.3.post0"
 
 jobs:
   build-linux-amd64:
